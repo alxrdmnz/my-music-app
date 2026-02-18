@@ -1,30 +1,21 @@
 # TempoFlow
 
-BPM-mapped workout playlists for Spotify.
+**TempoFlow** is a responsive Next.js app that generates Spotify playlists based on BPM-mapped workout curves. You choose duration, activity type, and progression; the app builds a playlist where each track’s tempo follows your chosen intensity curve.
 
-## Push to your GitHub
+## Overview
 
-1. **Create a new repo** at [github.com/new](https://github.com/new):
-   - Owner: **alxrdmnz**
-   - Repository name: **tempoflow** (or `my-music-app`)
-   - Public, no README/license (this project has them).
+- **Spotify integration** — Sign in with Spotify (NextAuth), then generate playlists using Spotify’s recommendation API with `target_tempo`, `min_tempo`, and `max_tempo` so each slot matches the curve.
+- **Activity types** — Yoga (60–90 BPM), Low intensity (100–120 BPM), High intensity (130–170 BPM).
+- **Progressions** — **Linear ramp** (BPM increases steadily over the session) or **HIIT intervals** (alternating high and rest BPM).
+- **Seeds** — Pick 1–3 artists or tracks; recommendations stay in that style while following the BPM curve.
+- **Curve visualizer** — Framer Motion SVG that updates as you change duration, activity, and progression (linear vs intervals).
+- **Crossfade preview** — Use the Spotify Web Playback SDK to preview transitions between two tracks (last 10 seconds of one, crossfade into the next).
+- **Save to Spotify** — Create a private playlist and add the generated tracks with one click.
+- **Failed matches** — If a slot has no strict BPM match, the app widens the tempo range and prioritizes genre/artist so you still get a full playlist.
 
-2. **In your project folder**, set Git user (once per machine if not set):
-   ```bash
-   git config user.name "alxrdmnz"
-   git config user.email "alxrdmnz@users.noreply.github.com"
-   ```
+Built with Next.js 15 (App Router), dark glassmorphism UI, mobile-first layout, and Shadcn-style drawers. Requires a Spotify Premium account for playback preview.
 
-3. **Commit and push:**
-   ```bash
-   cd /Users/alex/my-music-app
-   git add -A
-   git commit -m "TempoFlow: BPM workout playlists with Spotify"
-   git remote add origin https://github.com/alxrdmnz/tempoflow.git
-   git branch -M main
-   git push -u origin main
-   ```
-   (If you named the repo something else, use that instead of `tempoflow` in the `git remote add` and URL.)
+---
 
 ## Run locally
 
@@ -55,11 +46,9 @@ pnpm dev
 
 ## Scripts
 
-| Command        | Description                    |
-|----------------|--------------------------------|
-| `npm run dev`  | Start dev server (port 3000)   |
-| `npm run build`| Production build               |
-| `npm run start`| Start production server        |
-| `npm run clean`| Delete `.next` cache           |
-# my-music-app
-# my-music-app
+| Command         | Description                  |
+|-----------------|------------------------------|
+| `npm run dev`   | Start dev server (port 3000) |
+| `npm run build` | Production build             |
+| `npm run start` | Start production server     |
+| `npm run clean` | Delete `.next` cache         |
