@@ -15,7 +15,8 @@ async function searchSpotify(q: string): Promise<{
   tracks?: { id: string; name: string; artists: { id: string; name: string }[] }[];
 }> {
   const res = await fetch(
-    `/api/spotify/search?${new URLSearchParams({ q, type: "artist,track" })}`
+    `/api/spotify/search?${new URLSearchParams({ q, type: "artist,track" })}`,
+    { credentials: "include" }
   );
   let data: { artists?: { items?: unknown[] }; tracks?: { items?: unknown[] }; error?: string } = {};
   const contentType = res.headers.get("content-type");

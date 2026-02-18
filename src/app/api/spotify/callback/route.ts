@@ -33,9 +33,18 @@ export async function GET(req: Request) {
     verifier
   );
 
-  const res = NextResponse.redirect(origin + "/");
   const isProduction =
     process.env.VERCEL === "1" || process.env.VERCEL_ENV === "production";
+  // Return 200 + HTML redirect so Set-Cookie is persisted (Next/Vercel can drop cookies on 302)
+  const redirectUrl = origin + "/";
+  const safeUrl = redirectUrl.replace(/"/g, "&quot;");
+  const res = new NextResponse(
+    `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${safeUrl}"></head><body>Signing you in… <a href="${redirectUrl}">Continue</a></body></html>`,
+    {
+      status: 200,
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    }
+  );
   res.cookies.set("spotify_token", access_token, {
     httpOnly: true,
     secure: isProduction,
