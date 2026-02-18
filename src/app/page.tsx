@@ -1,30 +1,61 @@
-import { auth, signIn } from "@/auth";
-import { TempoBuilder } from "@/components/tempo-builder";
-import { Button } from "@/components/ui/button";
+import { cookies } from "next/headers";
 import { Header } from "@/components/header";
+import { TempoBuilder } from "@/components/tempo-builder";
 
-export default async function Home() {
-  const session = await auth();
-  if (!session) {
+async function getProfile() {
+  const token = (await cookies()).get("spotify_token")?.value;
+  if (!token) return null;
+  const res = await fetch("https://api.spotify.com/v1/me", {
+    headers: { Authorization: `Bearer ${token}` },
+    next: { revalidate: 0 },
+  });
+  if (!res.ok) return null;
+  return res.json() as Promise<{
+    display_name: string;
+    email?: string;
+    images?: { url: string }[];
+  }>;
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const profile = await getProfile();
+  const params = await searchParams;
+  const error = params?.error;
+
+  if (!profile) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#0a0a0a]">
-        <div className="w-full max-w-md rounded-3xl border border-white/10 bg-zinc-900/50 backdrop-blur-xl p-8 shadow-2xl">
-          <h1 className="text-2xl font-bold text-white mb-1">TempoFlow</h1>
-          <p className="text-white/60 text-sm mb-6">
+        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-zinc-900/50 p-8">
+          <h1 className="text-xl font-bold text-white mb-4">TempoFlow</h1>
+          <p className="text-white/60 text-sm mb-4">
             Generate Spotify playlists that follow your workout’s BPM curve.
           </p>
-          <form
-            action={async () => {
-              "use server";
-              await signIn("spotify", { redirectTo: "/" });
-            }}
+          {error && (
+            <p className="mb-4 text-sm text-amber-300">
+              Error:{" "}
+              {error === "no_code"
+                ? "No code from Spotify"
+                : error === "no_verifier"
+                  ? "Session expired — try again"
+                  : error}
+            </p>
+          )}
+          <a
+            href="/api/spotify/authorize"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1db954] px-5 py-3 text-sm font-medium text-white hover:bg-[#1ed760] transition-colors"
           >
-            <Button type="submit" variant="primary" className="w-full">
-              Sign in with Spotify
-            </Button>
-          </form>
-          <p className="text-xs text-white/40 mt-4">
-            Requires Spotify Premium for preview playback.
+            Sign in with Spotify
+          </a>
+          <p className="mt-4 text-xs text-white/50">
+            Open at <strong>http://127.0.0.1:3000</strong>. In Spotify Dashboard
+            → your app → Redirect URIs, add:{" "}
+            <code className="break-all text-white/70">
+              http://127.0.0.1:3000/api/spotify/callback
+            </code>
           </p>
         </div>
       </div>

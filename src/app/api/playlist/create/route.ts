@@ -1,68 +1,69 @@
-import { auth } from "@/auth";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 const SPOTIFY_API = "https://api.spotify.com/v1";
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.accessToken) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const token = (await cookies()).get("spotify_token")?.value;
+  if (!token) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const { name, description, trackUris }: { name: string; description?: string; trackUris: string[] } =
-    await req.json();
-  if (!name || !Array.isArray(trackUris) || trackUris.length === 0) {
-    return NextResponse.json(
-      { error: "name and trackUris required" },
-      { status: 400 }
-    );
-  }
-
+  let body: { name?: string; description?: string; trackUris?: string[] };
   try {
-    const createRes = await fetch(`${SPOTIFY_API}/users/me/playlists`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        description: description ?? "Created with TempoFlow",
-        public: false,
-      }),
-    });
-    if (!createRes.ok) {
-      const err = await createRes.text();
-      throw new Error(err || createRes.statusText);
-    }
-    const playlist = await createRes.json();
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
-    const addRes = await fetch(
-      `${SPOTIFY_API}/playlists/${playlist.id}/tracks`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ uris: trackUris }),
-      }
-    );
-    if (!addRes.ok) {
-      const err = await addRes.text();
-      throw new Error(err || addRes.statusText);
-    }
+  const { name = "TempoFlow Playlist", description = "", trackUris = [] } = body;
+  if (!trackUris.length) {
+    return NextResponse.json({ error: "trackUris required" }, { status: 400 });
+  }
 
-    return NextResponse.json({
-      playlistId: playlist.id,
-      playlistUrl: playlist.external_urls?.spotify,
-      snapshot_id: (await addRes.json()).snapshot_id,
-    });
-  } catch (e) {
-    console.error("Create playlist error:", e);
+  const createRes = await fetch(`${SPOTIFY_API}/me/playlists`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      description: description || undefined,
+      public: false,
+    }),
+  });
+
+  if (!createRes.ok) {
+    const text = await createRes.text();
     return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Failed to create playlist" },
-      { status: 500 }
+      { error: `Create playlist: ${createRes.status} ${text}` },
+      { status: createRes.status === 401 ? 401 : 502 }
     );
   }
+
+  const playlist = (await createRes.json()) as { id: string; external_urls?: { spotify?: string } };
+  const playlistId = playlist.id;
+
+  const addRes = await fetch(`${SPOTIFY_API}/playlists/${playlistId}/tracks`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ uris: trackUris }),
+  });
+
+  if (!addRes.ok) {
+    const text = await addRes.text();
+    return NextResponse.json(
+      { error: `Add tracks: ${addRes.status} ${text}` },
+      { status: addRes.status === 401 ? 401 : 502 }
+    );
+  }
+
+  return NextResponse.json({
+    playlistId,
+    playlistUrl: playlist.external_urls?.spotify ?? `https://open.spotify.com/playlist/${playlistId}`,
+  });
 }

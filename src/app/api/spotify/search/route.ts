@@ -1,13 +1,14 @@
-import { auth } from "@/auth";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 const SPOTIFY_API = "https://api.spotify.com/v1";
 
 export async function GET(req: Request) {
-  const session = await auth();
-  if (!session?.accessToken) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const token = (await cookies()).get("spotify_token")?.value;
+  if (!token) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
+
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q");
   const type = searchParams.get("type") ?? "artist,track";
@@ -15,23 +16,29 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "q required" }, { status: 400 });
   }
 
-  try {
-    const res = await fetch(
-      `${SPOTIFY_API}/search?${new URLSearchParams({
-        q: q.trim(),
-        type,
-        limit: "10",
-      })}`,
-      { headers: { Authorization: `Bearer ${session.accessToken}` } }
-    );
-    if (!res.ok) throw new Error(await res.text());
-    const data = await res.json();
-    return NextResponse.json(data);
-  } catch (e) {
-    console.error("Spotify search error:", e);
+  const res = await fetch(
+    `${SPOTIFY_API}/search?${new URLSearchParams({
+      q: q.trim(),
+      type,
+      limit: "10",
+    })}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
     return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Search failed" },
-      { status: 500 }
+      { error: res.status === 401 ? "Unauthorized" : `Spotify: ${res.status}` },
+      { status: res.status === 401 ? 401 : 502 }
     );
   }
+
+  const data = (await res.json()) as {
+    artists?: { items?: { id: string; name: string }[] };
+    tracks?: { items?: { id: string; name: string; artists?: { id: string; name: string }[] }[] };
+  };
+  return NextResponse.json({
+    artists: data.artists ?? {},
+    tracks: data.tracks ?? {},
+  });
 }
