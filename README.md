@@ -62,3 +62,4 @@ pnpm dev
 | `npm run start`| Start production server        |
 | `npm run clean`| Delete `.next` cache           |
 # my-music-app
+# my-music-app
