@@ -20,6 +20,9 @@
 # production
 /build
 
+# pnpm
+.pnpm-store
+
 # misc
 .DS_Store
 *.pem
