@@ -1,12 +1,16 @@
 import { createHash, randomBytes } from "node:crypto";
 
+const DEFAULT_REDIRECT_URI = "http://127.0.0.1:3000/api/spotify/callback";
+
 function getRedirectUri(): string {
   const fromEnv = (process.env.SPOTIFY_REDIRECT_URI ?? "").trim();
-  if (fromEnv) return fromEnv;
-  return "http://127.0.0.1:3000/api/spotify/callback";
+  if (fromEnv && !fromEnv.includes("localhost")) return fromEnv;
+  // Use 127.0.0.1 so callback and PKCE cookie share the same host
+  return DEFAULT_REDIRECT_URI;
 }
 
-const SCOPES = "user-read-private user-read-email playlist-modify-private playlist-read-private";
+const SCOPES =
+  "user-read-private user-read-email playlist-modify-private playlist-modify-public playlist-read-private";
 
 export function getSpotifyAuthEnv() {
   const clientId = (process.env.SPOTIFY_CLIENT_ID ?? "").trim();

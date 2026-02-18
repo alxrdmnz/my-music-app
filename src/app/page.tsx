@@ -40,7 +40,7 @@ export default async function Home({
               {error === "no_code"
                 ? "No code from Spotify"
                 : error === "no_verifier"
-                  ? "Session expired — try again"
+                  ? "Use http://127.0.0.1:3000 (not localhost) and sign in again."
                   : error}
             </p>
           )}

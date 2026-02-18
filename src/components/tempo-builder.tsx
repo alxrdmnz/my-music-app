@@ -160,6 +160,15 @@ export function TempoBuilder() {
             {saveMutation.isError && (
               <p className="text-sm text-red-400">
                 {saveMutation.error instanceof Error ? saveMutation.error.message : "Save failed"}
+                {saveMutation.error instanceof Error &&
+                  saveMutation.error.message.includes("Sign out") && (
+                    <>
+                      {" "}
+                      <a href="/api/spotify/logout" className="underline hover:text-red-300">
+                        Sign out
+                      </a>
+                    </>
+                  )}
               </p>
             )}
           </div>

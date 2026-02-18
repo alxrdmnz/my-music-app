@@ -33,6 +33,8 @@ Open **http://127.0.0.1:3000** (use `127.0.0.1`, not `localhost`).
 
 3. Restart the dev server after changing `.env.local`.
 
+**Note:** If "Save to Spotify" fails with a permission error, sign out and sign in again so the app can request playlist permissions.
+
 ## Scripts
 
 | Command           | Description                  |

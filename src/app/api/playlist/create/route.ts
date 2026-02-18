@@ -45,21 +45,31 @@ export async function POST(req: Request) {
   const playlist = (await createRes.json()) as { id: string; external_urls?: { spotify?: string } };
   const playlistId = playlist.id;
 
-  const addRes = await fetch(`${SPOTIFY_API}/playlists/${playlistId}/tracks`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ uris: trackUris }),
-  });
+  // Add Items to Playlist (current API: /items not deprecated /tracks). Max 100 per request.
+  const CHUNK_SIZE = 100;
+  for (let i = 0; i < trackUris.length; i += CHUNK_SIZE) {
+    const chunk = trackUris.slice(i, i + CHUNK_SIZE);
+    const addRes = await fetch(`${SPOTIFY_API}/playlists/${playlistId}/items`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ uris: chunk }),
+    });
 
-  if (!addRes.ok) {
-    const text = await addRes.text();
-    return NextResponse.json(
-      { error: `Add tracks: ${addRes.status} ${text}` },
-      { status: addRes.status === 401 ? 401 : 502 }
-    );
+    if (!addRes.ok) {
+      const text = await addRes.text();
+      const status = addRes.status;
+      const message =
+        status === 403
+          ? "Permission denied. Sign out and sign in again so the app can save playlists to your account."
+          : `Add tracks: ${status} ${text}`;
+      return NextResponse.json(
+        { error: message },
+        { status: status === 401 ? 401 : 502 }
+      );
+    }
   }
 
   return NextResponse.json({

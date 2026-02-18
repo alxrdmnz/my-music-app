@@ -11,8 +11,8 @@ export async function GET() {
   const verifier = generateCodeVerifier();
   const challenge = generateCodeChallenge(verifier);
 
-  const url = buildAuthorizeUrl(clientId, challenge);
-  const res = NextResponse.redirect(url);
+  const authUrl = buildAuthorizeUrl(clientId, challenge);
+  const res = NextResponse.redirect(authUrl);
   res.cookies.set("spotify_verifier", verifier, {
     httpOnly: true,
     secure: false,
