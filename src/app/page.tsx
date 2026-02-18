@@ -40,7 +40,9 @@ export default async function Home({
               {error === "no_code"
                 ? "No code from Spotify"
                 : error === "no_verifier"
-                  ? "Use http://127.0.0.1:3000 (not localhost) and sign in again."
+                  ? process.env.VERCEL_URL
+                    ? "Session expired. Sign in again."
+                    : "Use http://127.0.0.1:3000 (not localhost) and sign in again."
                   : error}
             </p>
           )}
@@ -50,13 +52,15 @@ export default async function Home({
           >
             Sign in with Spotify
           </a>
-          <p className="mt-4 text-xs text-white/50">
-            Open at <strong>http://127.0.0.1:3000</strong>. In Spotify Dashboard
-            → your app → Redirect URIs, add:{" "}
-            <code className="break-all text-white/70">
-              http://127.0.0.1:3000/api/spotify/callback
-            </code>
-          </p>
+          {!process.env.VERCEL_URL && (
+            <p className="mt-4 text-xs text-white/50">
+              Open at <strong>http://127.0.0.1:3000</strong>. In Spotify Dashboard
+              → your app → Redirect URIs, add:{" "}
+              <code className="break-all text-white/70">
+                http://127.0.0.1:3000/api/spotify/callback
+              </code>
+            </p>
+          )}
         </div>
       </div>
     );

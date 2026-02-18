@@ -5,8 +5,23 @@ const DEFAULT_REDIRECT_URI = "http://127.0.0.1:3000/api/spotify/callback";
 function getRedirectUri(): string {
   const fromEnv = (process.env.SPOTIFY_REDIRECT_URI ?? "").trim();
   if (fromEnv && !fromEnv.includes("localhost")) return fromEnv;
-  // Use 127.0.0.1 so callback and PKCE cookie share the same host
+  // Production on Vercel (e.g. tempoflowmusic.vercel.app)
+  const vercelUrl = (process.env.VERCEL_URL ?? "").trim();
+  if (vercelUrl) return `https://${vercelUrl}/api/spotify/callback`;
+  // Local: use 127.0.0.1 so callback and PKCE cookie share the same host
   return DEFAULT_REDIRECT_URI;
+}
+
+/** Origin to redirect to after auth/logout. Production: https://VERCEL_URL; local: http://127.0.0.1:port */
+export function getAppOrigin(req?: Request): string {
+  const vercelUrl = (process.env.VERCEL_URL ?? "").trim();
+  if (vercelUrl) return `https://${vercelUrl}`;
+  if (req) {
+    const url = new URL(req.url);
+    const port = url.port || "3000";
+    return `http://127.0.0.1:${port}`;
+  }
+  return "http://127.0.0.1:3000";
 }
 
 const SCOPES =

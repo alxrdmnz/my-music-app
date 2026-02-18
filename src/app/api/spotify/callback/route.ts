@@ -3,17 +3,11 @@ import { cookies } from "next/headers";
 import {
   getSpotifyAuthEnv,
   exchangeCodeForToken,
+  getAppOrigin,
 } from "@/lib/spotify-auth";
 
-/** Always send user to 127.0.0.1 so cookie and host match (avoid localhost). */
-function canonicalOrigin(req: Request): string {
-  const url = new URL(req.url);
-  const port = url.port || "3000";
-  return `http://127.0.0.1:${port}`;
-}
-
 export async function GET(req: Request) {
-  const origin = canonicalOrigin(req);
+  const origin = getAppOrigin(req);
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");
@@ -40,9 +34,10 @@ export async function GET(req: Request) {
   );
 
   const res = NextResponse.redirect(origin + "/");
+  const isProduction = !!process.env.VERCEL_URL;
   res.cookies.set("spotify_token", access_token, {
     httpOnly: true,
-    secure: false,
+    secure: isProduction,
     sameSite: "lax",
     maxAge: 60 * 60 * 24, // 24h
     path: "/",
