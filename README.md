@@ -35,6 +35,16 @@ Open **http://127.0.0.1:3000** (use `127.0.0.1`, not `localhost`).
 
 **Note:** If "Save to Spotify" fails with a permission error, sign out and sign in again so the app can request playlist permissions.
 
+## Deploy (Vercel)
+
+1. In the Vercel project → **Settings** → **Environment Variables**, add `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` for Production (and Preview if needed).
+2. Enable **Settings** → **Environment Variables** → **Automatically expose System Environment Variables** so the app can build the correct redirect URI (or set `SPOTIFY_REDIRECT_URI` to your exact production callback URL).
+3. In Spotify Dashboard → **Redirect URIs**, add your production callback, e.g.:
+   ```text
+   https://tempoflowmusic.vercel.app/api/spotify/callback
+   ```
+4. Redeploy after changing env vars.
+
 ## Scripts
 
 | Command           | Description                  |

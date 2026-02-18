@@ -34,7 +34,8 @@ export async function GET(req: Request) {
   );
 
   const res = NextResponse.redirect(origin + "/");
-  const isProduction = !!process.env.VERCEL_URL;
+  const isProduction =
+    process.env.VERCEL === "1" || process.env.VERCEL_ENV === "production";
   res.cookies.set("spotify_token", access_token, {
     httpOnly: true,
     secure: isProduction,
