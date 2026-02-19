@@ -73,16 +73,16 @@ export function SeedPicker({ seeds, onChange, disabled }: SeedPickerProps) {
   );
 
   return (
-    <div className="space-y-2">
-      <div className="flex gap-2">
-        <div className="relative flex-1">
+    <div className="space-y-2 min-w-0 w-full">
+      <div className="flex gap-2 min-w-0">
+        <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-white/40" />
           <Input
             placeholder="Search artists or tracks..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && refetch()}
-            className="pl-9"
+            className="pl-9 min-w-0"
             disabled={disabled}
           />
         </div>
@@ -97,22 +97,22 @@ export function SeedPicker({ seeds, onChange, disabled }: SeedPickerProps) {
         </Button>
       </div>
       {seeds.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 min-w-0">
           {seeds.map((s) => (
             <span
               key={s.id}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-2.5 py-1 text-sm text-white"
+              className="inline-flex items-center gap-1.5 max-w-full rounded-lg bg-white/10 px-2.5 py-1 text-sm text-white min-w-0"
             >
               {s.type === "artist" ? (
-                <User className="size-3.5 text-white/60" />
+                <User className="size-3.5 shrink-0 text-white/60" />
               ) : (
-                <Music className="size-3.5 text-white/60" />
+                <Music className="size-3.5 shrink-0 text-white/60" />
               )}
-              {s.name}
+              <span className="truncate min-w-0">{s.name}</span>
               <button
                 type="button"
                 onClick={() => remove(s.id)}
-                className="rounded p-0.5 hover:bg-white/20"
+                className="shrink-0 rounded p-0.5 hover:bg-white/20"
                 aria-label="Remove"
               >
                 <X className="size-3.5" />

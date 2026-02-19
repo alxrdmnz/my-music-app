@@ -77,7 +77,7 @@ export function TempoBuilder() {
   const canGetTracks = seeds.length >= 1 && seeds.length <= 5;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 min-w-0 w-full">
       <div className="space-y-2">
         <Label>Artists or tracks</Label>
         <p className="text-xs text-white/50">Choose 1–5 artists or tracks you love. We’ll generate a playlist from their music and save it to your Spotify.</p>
@@ -111,14 +111,14 @@ export function TempoBuilder() {
 
       {tracks && tracks.length > 0 && (
         <>
-          <div className="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-md overflow-hidden">
-            <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
-              <h2 className="font-semibold text-white">Tracks</h2>
-              <span className="text-sm text-white/50">{tracks.length} tracks</span>
+          <div className="min-w-0 rounded-2xl border border-white/10 bg-black/30 backdrop-blur-md overflow-hidden">
+            <div className="px-3 py-3 sm:px-4 border-b border-white/10 flex items-center justify-between gap-2 min-w-0">
+              <h2 className="font-semibold text-white truncate min-w-0">Tracks</h2>
+              <span className="text-sm text-white/50 shrink-0">{tracks.length} tracks</span>
             </div>
             <ul className="divide-y divide-white/5 max-h-72 overflow-y-auto">
               {tracks.map((t, i) => (
-                <li key={t.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5">
+                <li key={t.id} className="flex items-center gap-2 sm:gap-3 px-3 py-2.5 sm:px-4 hover:bg-white/5 min-w-0">
                   <span className="text-xs font-mono text-white/40 w-6">{i + 1}</span>
                   {t.album?.images?.[0]?.url ? (
                     <img src={t.album.images[0].url} alt="" className="size-10 rounded object-cover" />

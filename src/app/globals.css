@@ -10,10 +10,17 @@
   --color-foreground: var(--foreground);
 }
 
+html {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 @supports (padding-bottom: env(safe-area-inset-bottom)) {

@@ -28,8 +28,8 @@ export default async function Home({
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[#0a0a0a]">
-        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-zinc-900/50 p-8">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-6 sm:p-6 bg-[#0a0a0a] w-full min-w-0 max-w-[100vw]">
+        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-zinc-900/50 p-4 sm:p-8">
           <h1 className="text-xl font-bold text-white mb-4">TempoFlow</h1>
           <p className="text-white/60 text-sm mb-4">
             Build a Spotify playlist from the artists and tracks you love. Sign in, pick your favorites, and we’ll generate a playlist you can save straight to your account.
@@ -67,9 +67,9 @@ export default async function Home({
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a]">
+    <main className="min-h-screen min-w-0 w-full max-w-[100vw] bg-[#0a0a0a] overflow-x-hidden">
       <Header />
-      <div className="mx-auto max-w-2xl px-4 py-6">
+      <div className="mx-auto w-full max-w-2xl min-w-0 px-3 py-4 sm:px-4 sm:py-6">
         <TempoBuilder />
       </div>
     </main>
