@@ -3,8 +3,8 @@ import { Providers } from "@/components/providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TempoFlow — BPM Workout Playlists",
-  description: "Generate Spotify playlists mapped to your workout intensity curve.",
+  title: "TempoFlow — Playlists from Your Favorite Artists",
+  description: "Build a custom Spotify playlist from the artists and tracks you love. Pick your seeds, get a playlist, save it to your account.",
 };
 
 export default function RootLayout({

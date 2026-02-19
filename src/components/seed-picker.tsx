@@ -176,7 +176,7 @@ export function SeedPicker({ seeds, onChange, disabled }: SeedPickerProps) {
           )}
         </div>
       ) : null}
-      <p className="text-xs text-white/50">Pick 1–3 artists or tracks as seeds.</p>
+      <p className="text-xs text-white/50">Add 1–3 artists or tracks—we’ll build your playlist from their sound.</p>
     </div>
   );
 }

@@ -32,7 +32,7 @@ export default async function Home({
         <div className="w-full max-w-md rounded-2xl border border-white/10 bg-zinc-900/50 p-8">
           <h1 className="text-xl font-bold text-white mb-4">TempoFlow</h1>
           <p className="text-white/60 text-sm mb-4">
-            Generate Spotify playlists that follow your workout’s BPM curve.
+            Build a Spotify playlist from the artists and tracks you love. Sign in, pick your favorites, and we’ll generate a playlist you can save straight to your account.
           </p>
           {error && (
             <p className="mb-4 text-sm text-amber-300">

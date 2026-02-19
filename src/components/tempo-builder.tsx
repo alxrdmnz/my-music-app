@@ -80,7 +80,7 @@ export function TempoBuilder() {
     <div className="flex flex-col gap-6">
       <div className="space-y-2">
         <Label>Artists or tracks</Label>
-        <p className="text-xs text-white/50">Search and add 1–5 artists or tracks. We’ll build a playlist from their top tracks.</p>
+        <p className="text-xs text-white/50">Choose 1–3 artists or tracks you love. We’ll generate a playlist from their music and save it to your Spotify.</p>
         <SeedPicker seeds={seeds} onChange={setSeeds} />
       </div>
 
@@ -98,7 +98,7 @@ export function TempoBuilder() {
         ) : (
           <>
             <Music2 className="size-4" />
-            Get playlist
+            Generate playlist
           </>
         )}
       </Button>
