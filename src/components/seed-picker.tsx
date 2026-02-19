@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { SeedItem } from "@/types/playlist";
 
-const MAX_SEEDS = 3;
+const MAX_SEEDS = 5;
 
 async function searchSpotify(q: string): Promise<{
   artists?: { id: string; name: string }[];
@@ -176,7 +176,7 @@ export function SeedPicker({ seeds, onChange, disabled }: SeedPickerProps) {
           )}
         </div>
       ) : null}
-      <p className="text-xs text-white/50">Add 1–3 artists or tracks—we’ll build your playlist from their sound.</p>
+      <p className="text-xs text-white/50">Add 1–5 artists or tracks—we’ll build your playlist from their sound.</p>
     </div>
   );
 }
